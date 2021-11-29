@@ -17,7 +17,7 @@ os.system ("cls")
 # Variable para la logica de ventanas.
 cerrado = True
 
-# <----------------------------------------------------- MENUS SECUNDARIOS Y FUNCIONES ------------------------------------------------------------------>
+# <----------------------------------------------------- MENUS PRINCIPAL Y SECUNDARIOS CON FUNCIONES ------------------------------------------------------------------>
 def login():
     usuario = nombre_usuario.get()
     contraseña = contraseña_usuario.get()
@@ -456,7 +456,7 @@ def ventas():
         cerrado = False
         ventana_venta.protocol("WM_DELETE_WINDOW", cerrar)
 
-# <------------------------------------------------------------ MENU PRINCIPAL -------------------------------------------------------------------------->
+# <------------------------------------------------------------ LOGIN ------------------------------------------------------------------------------------------------------>
 ventana = tkinter.Tk()
 ventana.title('ABM')
 ventana.geometry('380x400')
