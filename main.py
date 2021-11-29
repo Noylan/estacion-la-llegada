@@ -142,9 +142,6 @@ def usuario():
                 boton_usuario.grid_forget()
                 boton_limpiar = tkinter.Button(ventana_usuario, text = 'Limpiar', command = limpiar,  width=25)
                 boton_limpiar.grid(row = 6, column = 1, padx = 10, pady = 10)
-        
-    def editar_usuario():
-        dni = caja_dni.get()
    
     if cerrado:
         ventana_usuario = tkinter.Tk()
@@ -208,8 +205,9 @@ def productos():
         cerrado = True
 
     def obtener_codigo_producto():
+        #Se abre el archivo
+        archivo_productos_2 = open('./archivos/productos.txt', 'r', encoding='utf-8')
         #Se lee el archivo.
-        archivo_productos_2 = open('./archivos/productos.txt', 'r', encoding='utf-8') #Creo el archivo productos.txt
         todos_los_productos = archivo_productos_2.readlines()
 
         codigo_producto = len(todos_los_productos)
@@ -377,17 +375,32 @@ def ventas():
                 lubricante.append(i[2])
             elif categoria == 'Combustible':
                 combustible.append(i[2])
-        
-        # if len(lubricante) == 0:
-        #     productos.append('No existe ningun producto')
-        #     lubricante.append('No existe ningun producto')
-        #     boton_venta.configure(state = DISABLED)
 
         categoria_selecionada = categoria_venta.get()
         if categoria_selecionada == 'Lubricante':
             nombre_venta['values'] = lubricante
         elif categoria_selecionada == 'Combustible':
             nombre_venta['values'] = combustible
+
+    def calcular_precio():
+        #Se lee el archivo.
+        archivo_ventas = open('./archivos/productos.txt', 'r', encoding='utf-8')
+        todos_los_productos = archivo_ventas.readlines()
+        nombre = nombre_venta.get()
+        cantidad = int(caja_cantidad.get())
+
+        productos = []
+        precio = 0
+
+        for i in todos_los_productos:
+            tpm = i.split(',')
+            productos.append(tpm)
+        
+        for i in productos:
+            if i[2] == nombre:
+                precio = int(i[3]) * cantidad
+
+        cantidad_a_pagar['text'] = precio
 
     def guardar_venta():
         #Creo un vector para ventas
@@ -396,13 +409,12 @@ def ventas():
         fecha_final = fecha.get()
         categoria = categoria_venta.get()
         nombre_producto = nombre_venta.get()
-        precio = str(caja_precio.get())
+        cantidad = str(caja_cantidad.get())
 
-        ventas.append(fecha_final + ',' + categoria + ',' + nombre_producto + ',' + precio)
+        ventas.append(fecha_final + ',' + categoria + ',' + nombre_producto + ',' + cantidad)
 
         categoria_venta.set('')
         nombre_venta.set('')
-        caja_precio.delete(0,"end")
 
         categoria_venta.focus()
         
@@ -445,18 +457,28 @@ def ventas():
 
         nombre_venta = ttk.Combobox (ventana_venta, state = "readonly", width= 47)
         nombre_venta.grid(row = 3, column = 1, padx= 5, pady = 5)
+       
+        label_cantidad = tkinter.Label(ventana_venta, text = 'Cantidad: ').grid(row = 4, column = 0, padx= 5, pady = 5)
 
-        label_precio = tkinter.Label(ventana_venta, text = 'Precio $: ').grid(row = 4, column = 0, padx= 5, pady = 5)
-        caja_precio = tkinter.Entry(ventana_venta, width = 50)
-        caja_precio.grid(row = 4, column = 1, padx = 5, pady = 5)
+        caja_cantidad = tkinter.Entry(ventana_venta, width = 50)
+        caja_cantidad.grid(row = 4, column = 1, padx = 5, pady = 5)
 
-        boton_venta = tkinter.Button(ventana_venta, text = 'Guardar', command = guardar_venta,  width=25)
-        boton_venta.grid(row = 5, column = 1, padx = 5, pady = 5)
+        label_cantidad_a_pagar = tkinter.Label(ventana_venta, text = 'Cantidad a pagar $: ').grid(row = 5, column = 0, padx= 5, pady = 5)
+        
+        cantidad_a_pagar = tkinter.Label(ventana_venta)
+        cantidad_a_pagar.grid(row = 5, column = 1, padx= 5, pady = 5)
+
+
+        boton_calcular_precio = tkinter.Button(ventana_venta, text = 'Calcular Precio', command = calcular_precio,  width= 25)
+        boton_calcular_precio.grid(row = 6, column = 1, padx = 5, pady = 5)
+
+        boton_venta = tkinter.Button(ventana_venta, text = 'Guardar', command = guardar_venta,  width= 25)
+        boton_venta.grid(row = 7, column = 1, padx = 5, pady = 5)
 
         cerrado = False
         ventana_venta.protocol("WM_DELETE_WINDOW", cerrar)
 
-# <------------------------------------------------------------ LOGIN ------------------------------------------------------------------------------------------------------>
+# <------------------------------------------------------------ LOGIN -------------------------------------------------------------------------------------------------->
 ventana = tkinter.Tk()
 ventana.title('ABM')
 ventana.geometry('380x400')
@@ -478,6 +500,5 @@ contraseña_usuario.grid(row = 4, column = 1, padx = 10, pady = 10)
 
 boton_ingresar = tkinter.Button(ventana, text = 'Ingresar', command = login, width = 45)
 boton_ingresar.grid(row = 5, column = 1, padx = 10, pady = 10)
-
 
 ventana.mainloop()
